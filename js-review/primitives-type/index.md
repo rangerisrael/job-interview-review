@@ -1,4 +1,4 @@
-// primitive types
+
 In JavaScript, there are 7 primitive types:
 
 string - text data ("hello")
