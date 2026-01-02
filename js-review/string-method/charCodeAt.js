@@ -30,8 +30,10 @@ console.log("\n");
 function nextChar(char) {
   // Your code here
   let strValue = char.charCodeAt() + 1;
+  //    letter = ascii or number 65 + 1
 
   return String.fromCharCode(strValue);
+  //   number to letter
 }
 
 // Test cases
