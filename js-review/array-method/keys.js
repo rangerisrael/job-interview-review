@@ -3,6 +3,12 @@
 const array = ["a", "b", "c"];
 const iterator = array.keys();
 
+const arr = ["a", , "c"];
+const sparseKeys = Object.keys(arr);
+const denseKeys = [...arr.keys()];
+console.log(sparseKeys); // ['0', '2']
+console.log(denseKeys); // [0, 1, 2]
+
 for (const key of iterator) {
   console.log(key);
 }
@@ -27,5 +33,7 @@ console.log(findFilledIndices(another));
 // Output: [0, 1, 3, 6]
 
 function findFilledIndices(arr) {
-  return arr.keys().next();
+  const sparseKeys = Object.keys(arr);
+  const denseKeys = [...arr.keys()];
+  console.log(sparseKeys);
 }
