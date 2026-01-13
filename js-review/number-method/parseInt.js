@@ -1,4 +1,5 @@
 // The parseInt() function parses a string argument and returns an integer of the specified radix (the base in mathematical numeral systems).
+
 console.log(parseInt("123"));
 // 123 (default base-10)
 console.log(parseInt("123", 10));

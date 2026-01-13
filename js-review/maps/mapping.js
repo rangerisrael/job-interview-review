@@ -1,7 +1,7 @@
 // Using Map - Clean and powerful
 const users = new Map();
 
-users.set(1, { name: "Israel", role: "developer", active: true });
+users.set(1, { name: "Real", role: "developer", active: true });
 users.set(2, { name: "Juan", role: "designer", active: false });
 users.set(3, { name: "Maria", role: "manager", active: true });
 
