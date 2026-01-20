@@ -1,3 +1,5 @@
+import { isNull, isUndefined } from "lodash";
+
 interface ITodo {
   id: number;
   todo: string;
@@ -11,6 +13,15 @@ interface IMeta {
   limit: number;
 }
 
+interface IPage {
+  currentPage: number;
+  itemPerPage: number;
+}
+
+interface IFilterResponseTerm extends IPage {
+  todos: ITodo[];
+  totalPage: number;
+}
 // request
 
 type IGetOneRequest = {
@@ -28,6 +39,8 @@ type ICreateResponse = {
   status: number;
   todo: ITodo;
 };
+
+type IBasicType = string | boolean | number;
 
 const apiTodo = "https://dummyjson.com/todos";
 
@@ -58,6 +71,7 @@ const getTodos = async (
       console.log({
         todos: todo ?? [],
         meta: meta ?? [],
+        totalData: todo.length,
       });
     }
 
@@ -106,9 +120,9 @@ const getOneTodo = async (
 
   response.todos.forEach((lookup, idx) => map.set(hasId(lookup.id), lookup));
 
-  console.log(map);
-  console.log(value);
-  console.log(map.get(value));
+  // console.log(map);
+  // console.log(value);
+  console.table(map.get(value));
 
   return response;
 };
@@ -118,19 +132,19 @@ const getTodoByTerm = async (
 ): Promise<ITodo[] | undefined> => {
   const fetchTodos = await getTodos(false);
 
-  const filterRequest = fetchTodos?.todos.filter(
-    (lookup: { [key: string]: any }) => {
-      return Object.entries(getTodo).every(([key, value]) =>
-        key == "todo" && typeof key == "string"
-          ? lookup[key]
-              ?.toLowerCase()
-              .includes(typeof value == "string" ? value?.toLowerCase() : "")
-          : lookup[key] === value,
-      );
-    },
-  );
+  const filterRequest = fetchTodos?.todos.filter((lookup: ITodo) => {
+    return Object.entries(getTodo).every(([key, value]) => {
+      const lookupTodo = lookup[key as keyof ITodo];
 
-  console.log(filterRequest, "GET REQUEST");
+      return typeof value == "string"
+        ? String(lookupTodo)
+            .toLowerCase()
+            .includes(value.toString().toLowerCase())
+        : lookupTodo == value;
+    });
+  });
+
+  console.table(filterRequest);
   return filterRequest;
 };
 
@@ -146,7 +160,7 @@ const insertOne = async (
       body: JSON.stringify({ ...newTodo }),
     });
 
-    console.log(newTodo);
+    console.table(newTodo);
     return {
       status: req.status,
       todo: newTodo,
@@ -189,7 +203,7 @@ const insertMany = async () => {
   if (!req) {
     console.log("Failed to create", req);
   } else {
-    console.log(response);
+    console.table(response);
   }
 
   return response;
@@ -205,7 +219,7 @@ const updateTodoviaAPI = async (
 
     if (response.status == 200) {
       const getTodo: ITodo = await response.json();
-      const existingTodo: any = getTodo;
+      const existingTodo: ITodo = getTodo;
 
       const updatedTodo = Object.assign(existingTodo, todo);
 
@@ -221,7 +235,7 @@ const updateTodoviaAPI = async (
         const updated: ITodo | Record<string, string | number | boolean> =
           await updateRequest.json();
 
-        console.log(updated, "data");
+        console.table(updated);
 
         return updated;
       } else {
@@ -230,7 +244,7 @@ const updateTodoviaAPI = async (
         return "Failed to update";
       }
     } else {
-      console.log("Not found", response.status);
+      console.log("Not found", response);
       return "Not found";
     }
   } catch (error) {
@@ -260,16 +274,85 @@ const deleteOne = async ({
   }
 };
 
+const getTodoByTermbyPage = async (
+  filteKey?: Partial<ITodo>,
+  page?: IPage,
+): Promise<string | IFilterResponseTerm | ITodo[]> => {
+  const fetchTodos = await getTodos(false);
+  const getFetchTodos = fetchTodos?.todos;
+
+  if (!isUndefined(getFetchTodos) && !isUndefined(filteKey)) {
+    // filter by key and value
+    const filterTodo = getFetchTodos.filter((todo: ITodo) => {
+      return Object.entries(filteKey).every(([key, value]) => {
+        const todoValue = todo[key as keyof ITodo];
+        return typeof value == "string" && typeof key == "string"
+          ? todoValue
+              .toString()
+              .toLowerCase()
+              .includes(value.toString().toLowerCase())
+          : todoValue == value;
+      });
+    });
+
+    if (
+      !isUndefined(page) &&
+      !isUndefined(page.currentPage) &&
+      !isUndefined(page.itemPerPage)
+    ) {
+      const { currentPage, itemPerPage } = page;
+
+      const startIndex = (currentPage - 1) * itemPerPage;
+      const endIndex = startIndex + itemPerPage;
+      const totalPage = Math.ceil(filterTodo.length ?? 0 / itemPerPage);
+
+      const filterTodosPerPage = filterTodo.slice(startIndex, endIndex);
+
+      return {
+        todos: filterTodosPerPage,
+        totalPage,
+        currentPage,
+        itemPerPage,
+      };
+    } else {
+      return filterTodo;
+    }
+  }
+  if (
+    !isUndefined(getFetchTodos) &&
+    isUndefined(filteKey) &&
+    page?.currentPage &&
+    page.itemPerPage
+  ) {
+    const { currentPage, itemPerPage } = page;
+
+    const start = (currentPage - 1) * itemPerPage;
+    const end = start + itemPerPage;
+    const totalPage = Math.ceil(getFetchTodos.length / itemPerPage);
+
+    const filterTodoData = getFetchTodos.slice(start, end);
+
+    return {
+      todos: filterTodoData,
+      totalPage,
+      currentPage,
+      itemPerPage,
+    };
+  } else {
+    return "Not found";
+  }
+};
+
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!
 
-//insertMany();
-//getTodos();
+// insertMany();
+// getTodos(true);
 
 // insertOne({
-//   id: 3,
+//   id: 31,
 //   todo: "Knowledge is not just a power its profit",
-//   completed: true,
-//   userId: 68,
+//   completed: false,
+//   userId: 90,
 // });
 //curl http://localhost:3000/todos
 // http://localhost:3000/todos?id=1&completed=false
@@ -278,11 +361,20 @@ const deleteOne = async ({
 // });
 
 // getTodoByTerm({
-//   todo: "Take",
+//   userId: 162,
 // });
 
-// updateTodoviaAPI(30, {
+getTodoByTermbyPage(undefined, {
+  currentPage: 2,
+  itemPerPage: 3,
+}).then((res) => {
+  if (typeof res == "object" && !isNull(res) && "todos" in res) {
+    console.log(res.todos);
+  }
+});
+
+// updateTodoviaAPI(16, {
 //   todo: "Analysis Paralysis",
 // });
 
-// deleteOne({ id: 30 });
+// deleteOne({ id: 16 });

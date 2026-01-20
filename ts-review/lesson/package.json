@@ -15,5 +15,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^6.4.0",
+    "@types/lodash": "^4.17.23",
+    "google-tts-api": "^2.0.2",
+    "lodash": "^4.17.21",
+    "say": "^0.16.0",
+    "tiktok-live-connector": "^2.1.1-beta1"
+  }
 }
