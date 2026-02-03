@@ -30,3 +30,5 @@ export default createJestConfig(config);
 # install tailwind merge and create utils
 
 clsx + tailwindmerge for overwrite classes
+
+# creaate a component
