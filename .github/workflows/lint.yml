@@ -21,14 +21,12 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8 # or your pnpm version
+          version: 8
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-          cache: "pnpm"
-          cache-dependency-path: react-review/react-fundamentals/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
