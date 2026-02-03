@@ -1,16 +1,16 @@
-import React, { ComponentProps } from "react";
+import React from "react";
 import RenderIf from "../function/RenderIf";
 import { isEmpty, isNull } from "lodash";
-import { ElementObject, ObjectRecord } from "./type";
+import { ElementObject } from "./type";
 
-type ITableProps<T extends Record<string, ObjectRecord>> = {
+type ITableProps<T extends object> = {
   caption: string;
   head: string[];
   body: T[];
   footer: string[] | React.ReactNode;
 };
 
-const ReusableTable = <T extends Record<string, ObjectRecord>>({
+const ReusableTable = <T extends object>({
   caption,
   head,
   body,
@@ -47,7 +47,7 @@ const ReusableTable = <T extends Record<string, ObjectRecord>>({
       )}
       <RenderIf value={!isEmpty(body)}>
         <tbody className="text-center h-auto ">
-          {body?.map((list: ObjectRecord, index) => (
+          {body?.map((list: object, index) => (
             <React.Fragment key={index}>
               <RenderIf value={typeof list == "object" && !isNull(list)}>
                 <tr
@@ -57,7 +57,7 @@ const ReusableTable = <T extends Record<string, ObjectRecord>>({
                   {head?.map((th, idx) => {
                     const item = (list as unknown as ElementObject)[th];
                     return (
-                      <td key={idx} className="p-2">
+                      <td key={`${idx}-${th}`} className="p-2">
                         {item}
                       </td>
                     );

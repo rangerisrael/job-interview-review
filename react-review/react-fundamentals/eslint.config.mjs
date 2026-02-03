@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "coverage/**", // ✅ Fixed: Use glob pattern with **
+    "node_modules/**", // ✅ Fixed: Typo (was "noode_modules")
   ]),
 ]);
 

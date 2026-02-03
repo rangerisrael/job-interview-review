@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChangeHandler, ElementObject, ObjectRecord } from "./type";
+import { ChangeHandler, ObjectRecord } from "./type";
 import RenderIf from "../function/RenderIf";
 import { isEmpty } from "lodash";
 import {
@@ -17,11 +17,11 @@ type IDropdownProps<T extends ObjectRecord> = {
   setFilterKeywork: (obj: ObjectRecord) => void;
 };
 
-function Input() {}
+// function Input() {}
 
-function SearchInput() {}
+// function SearchInput() {}
 
-function Menu() {}
+// function Menu() {}
 
 const DropdownSearch = <T extends ObjectRecord>({
   data,

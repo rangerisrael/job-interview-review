@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { build, sequence, perBuild } from "@jackfranklin/test-data-bot";
 import { faker } from "@faker-js/faker";
 import MainLayout from "./common/layout";
@@ -10,38 +10,12 @@ import Pagination from "./common/widget/Pagination";
 import DropdownSearch from "./common/widget/DropdownSearch";
 import { filterSearch } from "./utils/helper/filter-object";
 import ReusableTable from "./common/widget/Table";
-
-const userBuilder = build({
-  fields: {
-    id: sequence(),
-    name: perBuild(() => faker.person.fullName()), // updated from faker.name.fullName()
-    age: perBuild(() => faker.number.int({ min: 18, max: 80 })), // updated from faker.datatype.number
-    address: perBuild(
-      () =>
-        `${faker.location.streetAddress()}, ${faker.location.city()}, ${faker.location.state({ abbreviated: true })} ${faker.location.zipCode()}`,
-    ),
-  },
-});
-
-const users = userBuilder.many(20);
-
-export type IUser = (typeof users)[number];
+import { IUser } from "./types";
 
 const Page = () => {
-  const [users, setUsers] = useState<IUser[]>([]);
-
-  const [open, setOpen] = usePopModal();
-
-  const [{ currentPage, itemPerPage }, setPage] = useState<{
-    currentPage: number;
-    itemPerPage: number;
-  }>({
-    currentPage: 1,
-    itemPerPage: 5,
-  });
-
-  useEffect(() => {
-    const userBuilder = build<IUser>({
+  const [users, setUsers] = useState<IUser[]>(() => {
+    faker.seed(123);
+    const userBuilders = build<IUser>({
       fields: {
         id: sequence(),
         name: perBuild(() => faker.person.fullName()),
@@ -53,8 +27,18 @@ const Page = () => {
       },
     });
 
-    setUsers(userBuilder.many(1000)); // generate on client only
-  }, []);
+    return userBuilders.many(1000);
+  });
+
+  const [open, setOpen] = usePopModal();
+
+  const [{ currentPage, itemPerPage }, setPage] = useState<{
+    currentPage: number;
+    itemPerPage: number;
+  }>({
+    currentPage: 1,
+    itemPerPage: 5,
+  });
 
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
@@ -127,7 +111,7 @@ const Page = () => {
           {/* filter */}
 
           {/* end filter  */}
-          <ReusableTable<any>
+          <ReusableTable
             caption={"Personal Details"}
             head={["id", "name", "age", "address"]}
             body={users.slice(startIndex, endIndex)}
