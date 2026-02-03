@@ -9,8 +9,7 @@ import { usePopModal } from "./utils/global-state/useModal";
 import Pagination from "./common/widget/Pagination";
 import DropdownSearch from "./common/widget/DropdownSearch";
 import { filterSearch } from "./utils/helper/filter-object";
-
-const ReusableTable = React.lazy(() => import("./common/widget/Table"));
+import ReusableTable from "./common/widget/Table";
 
 const userBuilder = build({
   fields: {
@@ -80,73 +79,71 @@ const Page = () => {
           </button>
         </div>
 
-        <Suspense fallback={<div>Loading</div>}>
-          <div className="max-w-300 max-h-160 mx-auto">
-            <div className="grid grid-cols-3">
-              {Array.isArray(users) &&
-                Object.keys(users[0] || []).map((value, i) => (
-                  <section className="flex gap-1" key={i}>
-                    <label
-                      htmlFor="searchInput"
-                      className="font-semibold text-zinc-500"
-                    >
-                      {String(value).toUpperCase()}
-                    </label>
+        <div className="max-w-300 max-h-160 mx-auto">
+          <div className="grid grid-cols-3">
+            {Array.isArray(users) &&
+              Object.keys(users[0] || []).map((value, i) => (
+                <section className="flex gap-1" key={i}>
+                  <label
+                    htmlFor="searchInput"
+                    className="font-semibold text-zinc-500"
+                  >
+                    {String(value).toUpperCase()}
+                  </label>
 
-                    <DropdownSearch
-                      filterKey={value}
-                      data={users}
-                      index={i}
-                      id={`searchInput-${value}${i}`}
-                      isOpen={openDropdown === i}
-                      setOpen={(shouldOpen, index) => {
-                        // Only update if it's THIS dropdown (index matches)
-                        if (index === i) {
-                          setOpenDropdown(shouldOpen ? i : null);
-                        }
-                      }}
-                      setFilterKeywork={(listObject) =>
-                        setFilterKeywork(listObject)
+                  <DropdownSearch
+                    filterKey={value}
+                    data={users}
+                    index={i}
+                    id={`searchInput-${value}${i}`}
+                    isOpen={openDropdown === i}
+                    setOpen={(shouldOpen, index) => {
+                      // Only update if it's THIS dropdown (index matches)
+                      if (index === i) {
+                        setOpenDropdown(shouldOpen ? i : null);
                       }
-                    />
-                  </section>
-                ))}
-              <div className="ml-19 mt-5">
-                <button
-                  className="bg-indigo-500 text-white rounded-md px-10 py-2 cursor-pointer"
-                  onClick={() => {
-                    const queryTerm = filterSearch(users, filterKeyword);
+                    }}
+                    setFilterKeywork={(listObject) =>
+                      setFilterKeywork(listObject)
+                    }
+                  />
+                </section>
+              ))}
+            <div className="ml-19 mt-5">
+              <button
+                className="bg-indigo-500 text-white rounded-md px-10 py-2 cursor-pointer"
+                onClick={() => {
+                  const queryTerm = filterSearch(users, filterKeyword);
 
-                    setUsers(queryTerm);
-                  }}
-                >
-                  Filter
-                </button>
-              </div>
+                  setUsers(queryTerm);
+                }}
+              >
+                Filter
+              </button>
             </div>
           </div>
-          <div className="max-w-300 max-h-160 mx-auto overflow-y-auto my-10">
-            {/* filter */}
+        </div>
+        <div className="max-w-300 max-h-160 mx-auto overflow-y-auto my-10">
+          {/* filter */}
 
-            {/* end filter  */}
-            <ReusableTable
-              caption={"Personal Details"}
-              head={["id", "name", "age", "address"]}
-              body={users.slice(startIndex, endIndex)}
-              footer={
-                <Pagination
-                  onCurrentPage={(currentPage, itemPerPage) => {
-                    setPage({ currentPage, itemPerPage: itemPerPage });
-                  }}
-                  currentPage={currentPage}
-                  itemPerPage={itemPerPage}
-                  totalPerPage={total}
-                  totalLength={users.length}
-                />
-              }
-            />
-          </div>
-        </Suspense>
+          {/* end filter  */}
+          <ReusableTable<any>
+            caption={"Personal Details"}
+            head={["id", "name", "age", "address"]}
+            body={users.slice(startIndex, endIndex)}
+            footer={
+              <Pagination
+                onCurrentPage={(currentPage, itemPerPage) => {
+                  setPage({ currentPage, itemPerPage: itemPerPage });
+                }}
+                currentPage={currentPage}
+                itemPerPage={itemPerPage}
+                totalPerPage={total}
+                totalLength={users.length}
+              />
+            }
+          />
+        </div>
       </MainLayout>
 
       {open && (
