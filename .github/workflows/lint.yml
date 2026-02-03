@@ -29,7 +29,7 @@ jobs:
           node-version: "18"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --ignore-workspace
 
       - name: Run ESLint
         run: pnpm run lint
