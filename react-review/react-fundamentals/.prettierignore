@@ -1,0 +1,27 @@
+
+# Create .prettierignore file
+cat > .prettierignore << 'EOF'
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode
+.idea
+EOF
