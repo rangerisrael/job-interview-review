@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: react-review # Add this!
+        working-directory: react-review/react-fundamentals
 
     steps:
       - name: Checkout code
@@ -22,8 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-          cache: "npm"
-          cache-dependency-path: react-review/react-fundamentals/package-lock.json # Add this!
+          # No cache lines - simpler!
 
       - name: Install dependencies
         run: npm ci
