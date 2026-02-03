@@ -23,6 +23,6 @@ currentPage = 1
 itemPerPage = 8
 filterDataLength = 200
 
-startIndex = (currentPage - 1) \* itemPerPage
+startIndex = (currentPage - 1) * itemPerPage
 endIndex = startIndex + itemPerPage
 totalPage = Math.ceil(filterDataLength / itemPerPage)

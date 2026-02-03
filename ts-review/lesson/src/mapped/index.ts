@@ -35,5 +35,5 @@ const request: FormGenericState<ApiResponse> = {
 //Math.floor = whole remove decimal
 // negative  -4 + 1 = -5
 
-//truncate
+//Math.truncate
 // + / - remove decimal

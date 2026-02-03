@@ -24,10 +24,11 @@ class LiveStreamSpeakRecognizer {
   }
 
   setupListener() {
-    this.getComments();
+    // this.getComments();
     this.getJoinedUsername();
     this.getFollowers();
     this.getGift();
+    // this.getLikes();
   }
 
   protected getComments() {
@@ -72,6 +73,15 @@ class LiveStreamSpeakRecognizer {
       );
     });
   }
+  protected getLikes() {
+    return this.connection.on(WebcastEvent.LIKE, (data) => {
+      say.speak(
+        `${data?.user?.nickname ?? "Anonymous"} likes your livestream`,
+        "Rosa",
+        1,
+      );
+    });
+  }
 }
 
 type ILiveStream = InstanceType<
@@ -85,3 +95,6 @@ getLiveCount.connect();
 //curl "https://www.tiktok.com/@techdev_01/live"
 
 export default LiveStreamSpeakRecognizer;
+
+// ann_julienne
+// techdev_01
